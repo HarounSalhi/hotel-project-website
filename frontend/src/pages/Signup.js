@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useState } from "react"
 import { useSignup } from "../hooks/useSignup"
 
@@ -7,12 +8,13 @@ const Signup = () => {
   const [username, setUsername] = useState('')
   const [tel, setTel] = useState('')
   const [address, setAddress] = useState('')
+  const [genre, setGenre] = useState('')
   const {signup, error, isLoading} = useSignup()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    await signup(email, password, username, tel, address)
+    await signup(email, password, username, tel, address, genre)
   }
 
   return (
@@ -50,8 +52,19 @@ const Signup = () => {
         value={address} 
       />
 
+      <label>genre:</label>
+      <select 
+        onChange={(e) => setGenre(e.target.value)}
+        value={genre}
+      >
+          <option value="">--choisir une option--</option>
+          <option value="femme">Femme</option>
+          <option value="homme">Homme</option>
+      </select>
+
       <button disabled={isLoading}>Sign up</button>
       {error && <div className="error">{error}</div>}
+      <p>Vous avez un compte, <Link to="/login">log-in</Link></p>
     </form>
   )
 }

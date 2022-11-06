@@ -25,34 +25,38 @@ const userSchema = new Schema({
   address: {
     type: String,
     required: false
+  },
+  genre: {
+    type: String,
+    required: false
   }
 })
 
 // static signup method
-userSchema.statics.signup = async function(email, password, username, tel, address) {
+userSchema.statics.signup = async function(email, password, username, tel, address, genre) {
 
   // validation
   if (!email || !password || !username) {
-    throw Error('All fields must be filled')
+    throw Error('Veuillez remplir tous les champs')
   }
   if (!validator.isEmail(email)) {
-    throw Error('Email not valid')
+    throw Error('Invalid mail')
   }
   if (!validator.isStrongPassword(password)) {
-    throw Error('Password not strong enough')
+    throw Error('Le mot de passe doit contenir majuscule, miniscile, nombre, catartére spécial et doit au moins être 8 caractéres long')
   }
 
 
   const exists = await this.findOne({ email })
 
   if (exists) {
-    throw Error('Email already in use')
+    throw Error('email n\'est pas disponible')
   }
 
   const salt = await bcrypt.genSalt(10)
   const hash = await bcrypt.hash(password, salt)
 
-  const user = await this.create({ email, password: hash, username, tel, address })
+  const user = await this.create({ email, password: hash, username, tel, address, genre })
 
   return user
 }
@@ -61,7 +65,7 @@ userSchema.statics.signup = async function(email, password, username, tel, addre
 userSchema.statics.login = async function(email, password) {
 
   if (!email || !password) {
-    throw Error('All fields must be filled')
+    throw Error('Veuillez remplir tous les champs')
   }
 
   const user = await this.findOne({ email })
